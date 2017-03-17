@@ -6,16 +6,14 @@ export default{
 		obj.id = state.count;
 		state.todolist.unshift(obj);
 	},
-	[types.CANCEL](state,obj){
+	[types.CANCEL](state,id){
 		for(let i=0;i<state.todolist.length;i++){
-			console.log(obj.id);
-			if(state.todolist[i].id === obj.id){
+			console.log(id);
+			if(state.todolist[i].id === id){
 				state.todolist.splice(i,1);
 				break;
 			}
-			
 		}
-		console.log(state.todolist)
 	}
 	
 }
