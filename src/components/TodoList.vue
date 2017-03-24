@@ -2,10 +2,25 @@
   <div class="todolist">
   	<div class="title">未完成</div>
     <ul>
-    	<li v-for="todo in todolist">
-    		<input type="checkbox" class="checkinput"/>
+    	<li v-for="todo in getTodo">
+    		<input type="checkbox" class="checkinput" @click="movetodone(todo.id,$event)"/>
     		<div class="newTodo">{{ todo.newTodo}}</div>
     		<button class="cancelbtn" @click="cancel(todo.id)">取消</button>
+    	</li>
+    </ul>
+    <div class="title">已完成</div>
+    <ul>
+    	<li v-for="todo in getDone">
+    		<input type="checkbox" class="checkinput"  checked @click="movetodo(todo.id,$event)"/>
+    		<div class="newTodo">{{ todo.newTodo}}</div>
+    		<div class="time">{{ todo.time }}</div>
+    	</li>
+    </ul>
+     <div class="title">已取消</div>
+    <ul>
+    	<li v-for="todo in getCancel">
+    		<div class="newTodo" style="text-decoration: line-through;">{{ todo.newTodo}}</div>
+    		<button class="cancelbtn" @click="recovery(todo.id)">恢复</button>
     	</li>
     </ul>
   </div>
@@ -15,13 +30,50 @@
 export default {
 	name:'todolist',
 	computed:{
-		todolist(){
-			return this.$store.state.todolist;
+		getTodo(){
+			return this.$store.state.todolist.filter(function(d){
+				if(d.type===1){
+					return d;
+				}
+			});
+		},
+		getDone(){
+			return this.$store.state.todolist.filter(function(d){
+				if(d.type===2){
+					return d;
+				}
+			});
+		},
+		getCancel(){
+			return this.$store.state.todolist.filter(function(d){
+				if(d.type===3){
+					return d;
+				}
+			})
 		}
 	},
 	methods:{
+		movetodone(id,event){//移至已完成
+			if(event.target.checked){
+				this.$store.dispatch('movetodone',id);
+				event.target.checked = false;
+			}
+		},
+		movetodo(id,event){//移至未完成
+			if(!event.target.checked){
+				this.$store.dispatch('movetodo',id);
+				event.traget.checked =false;
+			}
+			//else if(id){
+//				this.$store.dispatch('movetodo',id);
+//				event.traget.checked =false;
+//			}
+		},
 		cancel(id){
 			this.$store.dispatch('cancel',id);
+		},
+		recovery(id){
+			this.$store.dispatch('recovery',id);
 		}
 	}
 }
@@ -66,6 +118,9 @@ li .cancelbtn{
 	height:28px;
 	line-height:28px;
 	background: #fff;
+}
+.time{
+	float: right;
 }
 </style>
 
